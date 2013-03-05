@@ -12,12 +12,9 @@ public class ApplicationRunner {
 			SNIPER_ID, Main.XMPP_HOSTNAME, Main.AUCTION_RESOURCE);
 	
 	private AuctionSniperDriver driver;
-	private String itemId;
 	
 	public void startBiddingIn(final FakeAuctionServer auction)
 	{
-		itemId = auction.getItemId();
-		
 		Thread thread = new Thread("Test Application")
 		{
 			@Override
@@ -36,27 +33,27 @@ public class ApplicationRunner {
 		driver = new AuctionSniperDriver(1000);
 		driver.hasTitle(MainWindow.APPLICATION_TITLE);
 		driver.hasColumnTitles();
-		driver.showsSniperStatus(itemId, 0, 0, textFor(SniperState.JOINING));
+		driver.showsSniperStatus(auction.getItemId(), 0, 0, textFor(SniperState.JOINING));
 	}
 	
-	public void showsSniperHasLostAuction(int lastPrice, int lastBid)
+	public void showsSniperHasLostAuction(FakeAuctionServer auction, int lastPrice, int lastBid)
 	{
-		driver.showsSniperStatus(itemId, lastPrice, lastBid, textFor(SniperState.LOST));
+		driver.showsSniperStatus(auction.getItemId(), lastPrice, lastBid, textFor(SniperState.LOST));
 	}
 	
-	public void showsSniperHasWonAuction(int lastPrice)
+	public void showsSniperHasWonAuction(FakeAuctionServer auction, int lastPrice)
 	{
-		driver.showsSniperStatus(itemId, lastPrice, lastPrice, textFor(SniperState.WON));
+		driver.showsSniperStatus(auction.getItemId(), lastPrice, lastPrice, textFor(SniperState.WON));
 	}
 	
-	public void hasShownSniperIsBidding(int lastPrice, int lastBid)
+	public void hasShownSniperIsBidding(FakeAuctionServer auction, int lastPrice, int lastBid)
 	{
-		driver.showsSniperStatus(itemId, lastPrice, lastBid, textFor(SniperState.BIDDING));
+		driver.showsSniperStatus(auction.getItemId(), lastPrice, lastBid, textFor(SniperState.BIDDING));
 	}
 	
-	public void hasShownSniperIsWinning(int winningBid)
+	public void hasShownSniperIsWinning(FakeAuctionServer auction, int winningBid)
 	{
-		driver.showsSniperStatus(itemId, winningBid, winningBid, textFor(SniperState.WINNING));
+		driver.showsSniperStatus(auction.getItemId(), winningBid, winningBid, textFor(SniperState.WINNING));
 	}
 	
 	public void stop()
