@@ -58,13 +58,17 @@ public class Main {
 					snipers.addSniper(SniperSnapshot.joining(itemId));
 					final Chat chat = connection.getChatManager()
 							.createChat(auctionId(itemId, connection), null);
-					notToBeGcd.add(chat);
-					
-					Auction auction = new XMPPAuction(chat);
+					Announcer<AuctionEventListener> auctionEventListeners =
+						Announcer.to(AuctionEventListener.class);
 					chat.addMessageListener(
 							new AuctionMessageTranslator(
 									connection.getUser(),
-									new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))));
+									auctionEventListeners.announce()));
+					notToBeGcd.add(chat);
+					
+					Auction auction = new XMPPAuction(chat);
+					auctionEventListeners.addListener(
+						new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers)));
 					auction.join();
 				}
 			});
