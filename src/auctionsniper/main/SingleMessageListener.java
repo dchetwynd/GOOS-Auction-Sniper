@@ -3,7 +3,7 @@ package auctionsniper.main;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
 import org.hamcrest.Matcher;
@@ -23,7 +23,6 @@ public class SingleMessageListener implements MessageListener
 	public void receivesAMessage(Matcher<? super String> messageMatcher) throws InterruptedException
 	{
 		final Message message = messages.poll(5, TimeUnit.SECONDS);
-		assertThat("Message", message, is(notNullValue()));
-		assertThat(message.getBody(), messageMatcher);
+		assertThat(message, hasProperty("body", messageMatcher));
 	}
 }

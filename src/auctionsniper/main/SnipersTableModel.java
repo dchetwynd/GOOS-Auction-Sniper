@@ -1,20 +1,25 @@
 package auctionsniper.main;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
+
+import com.objogate.exception.Defect;
 
 public class SnipersTableModel extends AbstractTableModel implements SniperListener
 {
-	private final static SniperSnapshot STARTING_UP =
-			new SniperSnapshot("item-54321", 0, 0, SniperState.JOINING);
 	private static String[] STATUS_TEXT =
 		{
 			"Joining Auction",
 			"Bidding in Auction",
 			"Winning in Auction",
 			"Lost Auction",
-			"Won Auction"};
+			"Won Auction"
+		};
 	
-	private SniperSnapshot sniperSnapshot = STARTING_UP;
+	private List<SniperSnapshot> snipers = new ArrayList<SniperSnapshot>();
 	
 	public int getColumnCount()
 	{
@@ -23,12 +28,12 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
 	
 	public int getRowCount()
 	{
-		return 1;
+		return snipers.size();
 	}
 	
 	public Object getValueAt(int rowIndex, int columnIndex)
 	{
-		return Column.at(columnIndex).valueIn(sniperSnapshot);
+		return Column.at(columnIndex).valueIn(snipers.get(rowIndex));
 	}
 	
 	@Override
@@ -38,12 +43,33 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
 	}
 	
 	public void sniperStateChanged(SniperSnapshot newSniperSnapshot) {
-		sniperSnapshot = newSniperSnapshot;
-		fireTableRowsUpdated(0, 0);
+		int rowIndex = rowMatching(newSniperSnapshot);
+		snipers.set(rowIndex, newSniperSnapshot);
+		fireTableRowsUpdated(rowIndex, rowIndex);
+	}
+	
+	private int rowMatching(SniperSnapshot snapshot)
+	{
+		for (int i = 0; i < snipers.size(); i++)
+		{
+			if (snapshot.isForSameItemAs(snipers.get(i)))
+			{
+				return i;
+			}
+		}
+		
+		throw new Defect("Cannot find match for " + snapshot);
 	}
 	
 	public static String textFor(SniperState state)
 	{
 		return STATUS_TEXT[state.ordinal()];
+	}
+	
+	public void addSniper(SniperSnapshot newSniper)
+	{
+		snipers.add(newSniper);
+		int lastRowIndex = snipers.size() - 1;
+		fireTableRowsInserted(lastRowIndex, lastRowIndex);
 	}
 }

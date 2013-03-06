@@ -35,6 +35,11 @@ public class SniperSnapshot
 		return new SniperSnapshot(itemId, lastPrice, lastBid, state.whenAuctionClosed());
 	}
 	
+	public boolean isForSameItemAs(SniperSnapshot otherSniper)
+	{
+		return itemId == otherSniper.itemId;
+	}
+	
 	public String toString()
 	{
 		return "Item ID: " + itemId + ", Last Price: "
