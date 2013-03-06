@@ -79,7 +79,7 @@ public class Main {
 							});
 	}
 	
-	private static XMPPConnection connection(String hostname, String username, String password)
+	public static XMPPConnection connection(String hostname, String username, String password)
 			throws XMPPException
 	{
 		XMPPConnection connection = new XMPPConnection(hostname);
