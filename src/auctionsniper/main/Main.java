@@ -29,7 +29,7 @@ public class Main {
 	private MainWindow ui;
 	
 	@SuppressWarnings("unused")
-	private static List<Chat> notToBeGcd = new ArrayList<Chat>();
+	private static List<Auction> notToBeGcd = new ArrayList<Auction>();
 	
 	public Main() throws Exception
 	{
@@ -56,18 +56,11 @@ public class Main {
 				public void joinAuction(String itemId)
 				{
 					snipers.addSniper(SniperSnapshot.joining(itemId));
-					final Chat chat = connection.getChatManager()
-							.createChat(auctionId(itemId, connection), null);
-					Announcer<AuctionEventListener> auctionEventListeners =
-						Announcer.to(AuctionEventListener.class);
-					chat.addMessageListener(
-							new AuctionMessageTranslator(
-									connection.getUser(),
-									auctionEventListeners.announce()));
-					notToBeGcd.add(chat);
 					
-					Auction auction = new XMPPAuction(chat);
-					auctionEventListeners.addListener(
+					Auction auction = new XMPPAuction(connection, itemId);
+					notToBeGcd.add(auction);
+					
+					auction.addActionEventListener(
 						new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers)));
 					auction.join();
 				}
@@ -94,10 +87,5 @@ public class Main {
 		connection.login(username, password, AUCTION_RESOURCE);
 		
 		return connection;
-	}
-	
-	private static String auctionId(String itemId, XMPPConnection connection)
-	{
-		return String.format(AUCTION_ID_FORMAT, itemId, connection.getServiceName());
 	}
 }
