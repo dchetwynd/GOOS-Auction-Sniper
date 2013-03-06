@@ -60,7 +60,7 @@ public class Main {
 					Auction auction = new XMPPAuction(connection, itemId);
 					notToBeGcd.add(auction);
 					
-					auction.addActionEventListener(
+					auction.addAuctionEventListener(
 						new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers)));
 					auction.join();
 				}

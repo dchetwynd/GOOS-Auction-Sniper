@@ -30,7 +30,7 @@ public class XMPPAuction implements Auction
 		sendMessage(Main.JOIN_COMMAND_FORMAT);
 	}
 	
-	public void addActionEventListener(AuctionEventListener listener)
+	public void addAuctionEventListener(AuctionEventListener listener)
 	{
 		auctionEventListeners.addListener(listener);
 	}
