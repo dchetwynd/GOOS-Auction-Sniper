@@ -7,7 +7,8 @@ import javax.swing.table.AbstractTableModel;
 
 import com.objogate.exception.Defect;
 
-public class SnipersTableModel extends AbstractTableModel implements SniperListener
+public class SnipersTableModel extends AbstractTableModel
+	implements SniperListener, SniperCollector
 {
 	private static String[] STATUS_TEXT =
 		{
@@ -63,6 +64,11 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
 	public static String textFor(SniperState state)
 	{
 		return STATUS_TEXT[state.ordinal()];
+	}
+	
+	public void addSniper(AuctionSniper newSniper)
+	{
+		addSniper(newSniper.getSnapshot());
 	}
 	
 	public void addSniper(SniperSnapshot newSniper)
