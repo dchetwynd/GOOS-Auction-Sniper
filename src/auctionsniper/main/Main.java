@@ -27,7 +27,6 @@ public class Main {
 	private final SnipersTableModel snipers = new SnipersTableModel();
 	private MainWindow ui;
 	
-	@SuppressWarnings("unused")
 	private static List<Auction> notToBeGcd = new ArrayList<Auction>();
 	
 	public Main() throws Exception
@@ -50,19 +49,7 @@ public class Main {
 	private void addUserRequestListenerFor(final AuctionHouse auctionHouse)
 	{
 		ui.addUserRequestListener(
-			new UserRequestListener()
-			{
-				public void joinAuction(String itemId)
-				{
-					snipers.addSniper(SniperSnapshot.joining(itemId));
-					
-					Auction auction = auctionHouse.auctionFor(itemId);
-					notToBeGcd.add(auction);				
-					auction.addAuctionEventListener(
-						new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers)));
-					auction.join();
-				}
-			});
+			new SniperLauncher(auctionHouse, snipers));
 	}
 	
 	private void disconnectWhenUICloses(final XMPPAuctionHouse auctionHouse)
