@@ -10,6 +10,7 @@ import com.objogate.exception.Defect;
 public class SnipersTableModel extends AbstractTableModel
 	implements SniperListener, SniperCollector
 {
+	private static List<AuctionSniper> notToBeGCd = new ArrayList<AuctionSniper>();
 	private static String[] STATUS_TEXT =
 		{
 			"Joining Auction",
@@ -68,10 +69,12 @@ public class SnipersTableModel extends AbstractTableModel
 	
 	public void addSniper(AuctionSniper newSniper)
 	{
-		addSniper(newSniper.getSnapshot());
+		notToBeGCd.add(newSniper);
+		addSniperSnapshot(newSniper.getSnapshot());
+		newSniper.addSniperListener(new SwingThreadSniperListener(this));
 	}
 	
-	public void addSniper(SniperSnapshot newSniper)
+	public void addSniperSnapshot(SniperSnapshot newSniper)
 	{
 		snipers.add(newSniper);
 		int lastRowIndex = snipers.size() - 1;

@@ -1,26 +1,20 @@
 package auctionsniper.main;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SniperLauncher implements UserRequestListener
 {
-	private static List<Auction> notToBeGcd = new ArrayList<Auction>();
 	private final AuctionHouse auctionHouse;
 	private final SniperCollector collector;
 	
-	public SniperLauncher(AuctionHouse auctionHouse, SniperCollector snipers)
+	public SniperLauncher(AuctionHouse auctionHouse, SniperCollector collector)
 	{
 		this.auctionHouse = auctionHouse;
-		this.collector = snipers;
+		this.collector = collector;
 	}
 	
 	public void joinAuction(String itemId)
 	{
 		Auction auction = auctionHouse.auctionFor(itemId);
-		notToBeGcd.add(auction);				
-		AuctionSniper sniper =
-			new AuctionSniper(itemId, auction, new SwingThreadSniperListener((SnipersTableModel)collector));
+		AuctionSniper sniper = new AuctionSniper(itemId, auction);
 		collector.addSniper(sniper);
 		
 		auction.addAuctionEventListener(sniper);

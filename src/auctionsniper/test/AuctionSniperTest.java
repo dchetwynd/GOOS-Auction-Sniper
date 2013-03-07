@@ -3,6 +3,7 @@ package auctionsniper.test;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.States;
+import org.junit.Before;
 import org.junit.Test;
 
 import auctionsniper.main.Auction;
@@ -20,7 +21,14 @@ public class AuctionSniperTest
 	private final States sniperState = context.states("sniper");
 	
 	private final String ITEM_ID = "item-54321";
-	private final AuctionSniper sniper = new AuctionSniper(ITEM_ID, auction, sniperListener);
+	private AuctionSniper sniper;
+	
+	@Before
+	public void addSniperListener()
+	{
+		sniper = new AuctionSniper(ITEM_ID, auction);
+		sniper.addSniperListener(sniperListener);
+	}
 	
 	@Test
 	public void reportsLostIfAuctionClosesImmediately()
