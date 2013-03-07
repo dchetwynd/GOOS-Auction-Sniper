@@ -23,23 +23,22 @@ public class XMPPAuctionTest
 {
 	private final String ITEM_ID = "item-54321";
 	private final FakeAuctionServer auctionServer = new FakeAuctionServer(ITEM_ID);
-	private XMPPConnection connection;
+	private XMPPAuctionHouse auctionHouse;
 	
 	@Before
 	public void startSellingItem() throws XMPPException
 	{
-		XMPPAuctionHouse auctionHouse = XMPPAuctionHouse.connect(Main.XMPP_HOSTNAME,
-																ApplicationRunner.SNIPER_ID,
-																ApplicationRunner.SNIPER_PASSWORD);
-		connection = auctionHouse.getConnection();
+		auctionHouse = XMPPAuctionHouse.connect(Main.XMPP_HOSTNAME,
+											   ApplicationRunner.SNIPER_ID,
+											   ApplicationRunner.SNIPER_PASSWORD);
 		auctionServer.startSellingItem();
 	}
 	
 	@After
 	public void closeConnection()
 	{
-		if (connection != null)
-			connection.disconnect();
+		if (auctionHouse != null)
+			auctionHouse.disconnect();
 	}
 	
 	@Test
@@ -47,7 +46,7 @@ public class XMPPAuctionTest
 	{
 		CountDownLatch auctionWasClosed = new CountDownLatch(1);
 		
-		Auction auction = new XMPPAuction(connection, auctionServer.getItemId());
+		Auction auction = auctionHouse.auctionFor(ITEM_ID);
 		auction.addAuctionEventListener(auctionClosedListener(auctionWasClosed));
 		
 		auction.join();
@@ -66,5 +65,4 @@ public class XMPPAuctionTest
 					   public void currentPrice(int price, int increment, PriceSource priceSource) {}
 				   };
 	}
-
 }
