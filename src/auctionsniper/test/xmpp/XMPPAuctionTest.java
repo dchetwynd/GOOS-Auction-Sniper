@@ -1,4 +1,4 @@
-package auctionsniper.test;
+package auctionsniper.test.xmpp;
 
 import static org.junit.Assert.*;
 
@@ -14,7 +14,9 @@ import org.junit.Test;
 import auctionsniper.main.Auction;
 import auctionsniper.main.AuctionEventListener;
 import auctionsniper.main.Main;
-import auctionsniper.main.XMPPAuction;
+import auctionsniper.test.ApplicationRunner;
+import auctionsniper.test.FakeAuctionServer;
+import auctionsniper.xmpp.XMPPAuction;
 
 public class XMPPAuctionTest
 {
