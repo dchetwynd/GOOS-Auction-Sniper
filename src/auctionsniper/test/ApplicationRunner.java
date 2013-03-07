@@ -3,13 +3,14 @@ package auctionsniper.test;
 import auctionsniper.main.Main;
 import auctionsniper.main.SniperState;
 import auctionsniper.ui.MainWindow;
+import auctionsniper.xmpp.XMPPAuctionHouse;
 import static auctionsniper.main.SnipersTableModel.textFor;
 
 public class ApplicationRunner {
 	public static final String SNIPER_ID = "sniper";
 	public static final String SNIPER_PASSWORD = "sniper";
 	public static String SNIPER_XMPP_ID = String.format("%s@%s/%s",
-			SNIPER_ID, Main.XMPP_HOSTNAME, Main.AUCTION_RESOURCE);
+			SNIPER_ID, Main.XMPP_HOSTNAME, XMPPAuctionHouse.AUCTION_RESOURCE);
 	
 	private AuctionSniperDriver driver;
 	
