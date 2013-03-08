@@ -72,7 +72,7 @@ public class SnipersTableModel extends AbstractTableModel
 		newSniper.addSniperListener(new SwingThreadSniperListener(this));
 	}
 	
-	public void addSniperSnapshot(SniperSnapshot newSniper)
+	private void addSniperSnapshot(SniperSnapshot newSniper)
 	{
 		snipers.add(newSniper);
 		int lastRowIndex = snipers.size() - 1;
