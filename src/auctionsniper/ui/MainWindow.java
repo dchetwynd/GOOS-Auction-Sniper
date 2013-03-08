@@ -14,6 +14,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import auctionsniper.main.Announcer;
+import auctionsniper.main.SniperPortfolio;
 import auctionsniper.main.SnipersTableModel;
 import auctionsniper.main.UserRequestListener;
 
@@ -28,11 +29,11 @@ public class MainWindow extends JFrame
 	private final Announcer<UserRequestListener> userRequests =
 		Announcer.to(UserRequestListener.class);
 	
-	public MainWindow(SnipersTableModel snipers)
+	public MainWindow(SniperPortfolio portfolio)
 	{
 		super("Auction Sniper");
 		setName(APPLICATION_TITLE);
-		fillContentPane(makeControls(), makeSnipersTable(snipers));
+		fillContentPane(makeControls(), makeSnipersTable(portfolio));
 		pack();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
@@ -52,9 +53,11 @@ public class MainWindow extends JFrame
 		contentPane.add(new JScrollPane(snipersTable), BorderLayout.CENTER);
 	}
 	
-	private JTable makeSnipersTable(SnipersTableModel snipers)
+	private JTable makeSnipersTable(SniperPortfolio portfolio)
 	{
-		final JTable snipersTable = new JTable(snipers);
+		final SnipersTableModel model = new SnipersTableModel();
+		portfolio.addPortfolioListener(model);
+		final JTable snipersTable = new JTable(model);
 		snipersTable.setName(SNIPERS_TABLE_NAME);
 		return snipersTable;
 	}

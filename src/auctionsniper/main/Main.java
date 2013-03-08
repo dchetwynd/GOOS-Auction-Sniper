@@ -24,8 +24,8 @@ public class Main {
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 	
-	private final SnipersTableModel snipers = new SnipersTableModel();
 	private MainWindow ui;
+	private final SniperPortfolio portfolio = new SniperPortfolio();
 	
 	private static List<Auction> notToBeGcd = new ArrayList<Auction>();
 	
@@ -33,7 +33,7 @@ public class Main {
 	{
 		SwingUtilities.invokeAndWait(new Runnable()
 		{
-			public void run() { ui = new MainWindow(snipers); }
+			public void run() { ui = new MainWindow(portfolio); }
 		});
 	}
 	
@@ -49,7 +49,7 @@ public class Main {
 	private void addUserRequestListenerFor(final AuctionHouse auctionHouse)
 	{
 		ui.addUserRequestListener(
-			new SniperLauncher(auctionHouse, snipers));
+			new SniperLauncher(auctionHouse, portfolio));
 	}
 	
 	private void disconnectWhenUICloses(final XMPPAuctionHouse auctionHouse)

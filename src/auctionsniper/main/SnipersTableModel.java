@@ -8,9 +8,8 @@ import javax.swing.table.AbstractTableModel;
 import com.objogate.exception.Defect;
 
 public class SnipersTableModel extends AbstractTableModel
-	implements SniperListener, SniperCollector
+	implements SniperListener, PortfolioListener
 {
-	private static List<AuctionSniper> notToBeGCd = new ArrayList<AuctionSniper>();
 	private static String[] STATUS_TEXT =
 		{
 			"Joining Auction",
@@ -67,9 +66,8 @@ public class SnipersTableModel extends AbstractTableModel
 		return STATUS_TEXT[state.ordinal()];
 	}
 	
-	public void addSniper(AuctionSniper newSniper)
+	public void sniperAdded(AuctionSniper newSniper)
 	{
-		notToBeGCd.add(newSniper);
 		addSniperSnapshot(newSniper.getSnapshot());
 		newSniper.addSniperListener(new SwingThreadSniperListener(this));
 	}

@@ -6,14 +6,15 @@ import org.junit.Test;
 
 import com.objogate.wl.swing.probe.ValueMatcherProbe;
 
+import auctionsniper.main.SniperPortfolio;
 import auctionsniper.main.SnipersTableModel;
 import auctionsniper.main.UserRequestListener;
 import auctionsniper.ui.MainWindow;
 
 public class MainWindowTest
 {
-	private final SnipersTableModel tableModel = new SnipersTableModel();
-	private final MainWindow mainWindow = new MainWindow(tableModel);
+	private final SniperPortfolio portfolio = new SniperPortfolio();
+	private final MainWindow mainWindow = new MainWindow(portfolio);
 	private final AuctionSniperDriver driver = new AuctionSniperDriver(100);
 	
 	@Test
@@ -35,5 +36,4 @@ public class MainWindowTest
 		driver.startBiddingFor(itemId);
 		driver.check(buttonProbe);
 	}
-
 }
