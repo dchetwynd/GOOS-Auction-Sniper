@@ -33,7 +33,7 @@ public class MainWindowTest
 				}
 			});
 		
-		driver.startBiddingFor(itemId);
+		driver.startBiddingFor(itemId, Integer.MAX_VALUE);
 		driver.check(buttonProbe);
 	}
 }

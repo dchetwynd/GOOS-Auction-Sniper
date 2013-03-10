@@ -15,6 +15,7 @@ public class SnipersTableModel extends AbstractTableModel
 			"Joining Auction",
 			"Bidding in Auction",
 			"Winning in Auction",
+			"Losing in Auction",
 			"Lost Auction",
 			"Won Auction"
 		};
