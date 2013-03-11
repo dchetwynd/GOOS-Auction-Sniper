@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import com.objogate.wl.swing.probe.ValueMatcherProbe;
 
+import auctionsniper.main.Item;
 import auctionsniper.main.SniperPortfolio;
 import auctionsniper.main.SnipersTableModel;
 import auctionsniper.main.UserRequestListener;
@@ -21,19 +22,19 @@ public class MainWindowTest
 	public void makesUserRequestWhenJoinButtonClicked()
 	{
 		final String itemId = "item-54321";
-		final ValueMatcherProbe<String> buttonProbe = 
-			new ValueMatcherProbe<String>(equalTo(itemId), "join request");
+		final ValueMatcherProbe<Item> itemProbe = 
+			new ValueMatcherProbe<Item>(equalTo(new Item(itemId, 789)), "join request");
 		
 		mainWindow.addUserRequestListener(
 			new UserRequestListener()
 			{
-				public void joinAuction(String itemId)
+				public void joinAuction(Item item)
 				{
-					buttonProbe.setReceivedValue(itemId);
+					itemProbe.setReceivedValue(item);
 				}
 			});
 		
-		driver.startBiddingFor(itemId, Integer.MAX_VALUE);
-		driver.check(buttonProbe);
+		driver.startBiddingFor(itemId, 789);
+		driver.check(itemProbe);
 	}
 }

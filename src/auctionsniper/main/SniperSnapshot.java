@@ -30,6 +30,11 @@ public class SniperSnapshot
 		return new SniperSnapshot(itemId, newLastPrice, newLastBid, SniperState.BIDDING);
 	}
 	
+	public SniperSnapshot losing(int newLastPrice)
+	{
+		return new SniperSnapshot(itemId, newLastPrice, lastBid, SniperState.LOSING);
+	}
+	
 	public SniperSnapshot closed()
 	{
 		return new SniperSnapshot(itemId, lastPrice, lastBid, state.whenAuctionClosed());
@@ -53,9 +58,9 @@ public class SniperSnapshot
 		
 		SniperSnapshot other = (SniperSnapshot) obj;
 		
-		return (itemId == other.itemId)
+		return (itemId.equals(other.itemId)
 				&& (lastPrice == other.lastPrice)
 				&& (lastBid == other.lastBid)
-				&& (state.ordinal() == other.state.ordinal());
+				&& (state.ordinal() == other.state.ordinal()));
 	}
 }

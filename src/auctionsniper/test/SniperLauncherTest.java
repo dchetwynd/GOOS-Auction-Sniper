@@ -14,6 +14,7 @@ import auctionsniper.main.Auction;
 import auctionsniper.main.AuctionEventListener;
 import auctionsniper.main.AuctionHouse;
 import auctionsniper.main.AuctionSniper;
+import auctionsniper.main.Item;
 import auctionsniper.main.SniperCollector;
 import auctionsniper.main.SniperLauncher;
 
@@ -31,9 +32,10 @@ public class SniperLauncherTest
 	public void addsNewSniperToCollectorAndThenJoinsAuction()
 	{
 		final String itemId = "item-54321";
+		final Item item = new Item(itemId, Integer.MAX_VALUE);
 		context.checking(new Expectations()
 							 {{
-								allowing(auctionHouse).auctionFor(itemId);
+								allowing(auctionHouse).auctionFor(item);
 									will(returnValue(auction));
 								oneOf(auction).addAuctionEventListener(with(sniperForItem(itemId)));
 									when(auctionState.is("not joined"));
@@ -43,7 +45,7 @@ public class SniperLauncherTest
 									then(auctionState.is("joined"));
 							 }});
 		
-		launcher.joinAuction(itemId);
+		launcher.joinAuction(item);
 	}
 	
 	private Matcher<AuctionSniper> sniperForItem(String itemId)

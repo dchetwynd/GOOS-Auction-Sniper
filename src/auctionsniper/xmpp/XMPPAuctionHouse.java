@@ -5,6 +5,7 @@ import org.jivesoftware.smack.XMPPException;
 
 import auctionsniper.main.Auction;
 import auctionsniper.main.AuctionHouse;
+import auctionsniper.main.Item;
 
 public class XMPPAuctionHouse implements AuctionHouse
 {
@@ -19,9 +20,9 @@ public class XMPPAuctionHouse implements AuctionHouse
 		this.connection = connection;
 	}
 	
-	public Auction auctionFor(String itemId)
+	public Auction auctionFor(Item item)
 	{
-		return new XMPPAuction(connection, itemId);
+		return new XMPPAuction(connection, item.identifier);
 	}
 	
 	public XMPPConnection getConnection()

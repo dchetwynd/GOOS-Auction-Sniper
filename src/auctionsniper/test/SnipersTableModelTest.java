@@ -21,6 +21,7 @@ import com.objogate.exception.Defect;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 import auctionsniper.main.AuctionSniper;
+import auctionsniper.main.Item;
 import auctionsniper.main.SniperSnapshot;
 import auctionsniper.main.SniperState;
 import auctionsniper.main.SnipersTableModel;
@@ -33,7 +34,8 @@ public class SnipersTableModelTest
 	private final Mockery context = new Mockery();
 	private TableModelListener listener = context.mock(TableModelListener.class);
 	private final SnipersTableModel model = new SnipersTableModel();
-	private final AuctionSniper sniper1 = new AuctionSniper(ITEM_ID, null);
+	private final AuctionSniper sniper1 = new AuctionSniper(
+		new Item(ITEM_ID, Integer.MAX_VALUE), null);
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -99,7 +101,8 @@ public class SnipersTableModelTest
 						 }});
 		
 		model.sniperAdded(sniper1);
-		AuctionSniper sniper2 = new AuctionSniper("item-65432", null);
+		AuctionSniper sniper2 = new AuctionSniper(
+			new Item("item-65432", Integer.MAX_VALUE), null);
 		model.sniperAdded(sniper2);
 		
 		assertEquals(ITEM_ID, cellValue(0, Column.ITEM_IDENTIFIER));
@@ -127,7 +130,8 @@ public class SnipersTableModelTest
 	@Test
 	public void updatesCorrectRowForSniper()
 	{
-		AuctionSniper sniper2 = new AuctionSniper("item-65432", null);
+		AuctionSniper sniper2 = new AuctionSniper(
+			new Item("item-65432", Integer.MAX_VALUE), null);
 		context.checking(new Expectations()
 						 {{
 							 allowing(listener).tableChanged(with(anyInsertionEvent()));

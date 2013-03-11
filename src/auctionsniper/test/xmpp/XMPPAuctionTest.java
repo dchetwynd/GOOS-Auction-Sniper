@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import auctionsniper.main.Auction;
 import auctionsniper.main.AuctionEventListener;
+import auctionsniper.main.Item;
 import auctionsniper.main.Main;
 import auctionsniper.test.ApplicationRunner;
 import auctionsniper.test.FakeAuctionServer;
@@ -45,8 +46,9 @@ public class XMPPAuctionTest
 	public void receivesEventsFromAuctionServerAfterJoining() throws Exception
 	{
 		CountDownLatch auctionWasClosed = new CountDownLatch(1);
+		Item item = new Item(ITEM_ID, Integer.MAX_VALUE);
 		
-		Auction auction = auctionHouse.auctionFor(ITEM_ID);
+		Auction auction = auctionHouse.auctionFor(item);
 		auction.addAuctionEventListener(auctionClosedListener(auctionWasClosed));
 		
 		auction.join();

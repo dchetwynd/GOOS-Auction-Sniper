@@ -19,6 +19,7 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
 import auctionsniper.main.Announcer;
+import auctionsniper.main.Item;
 import auctionsniper.main.SniperPortfolio;
 import auctionsniper.main.SnipersTableModel;
 import auctionsniper.main.UserRequestListener;
@@ -32,6 +33,11 @@ public class MainWindow extends JFrame
 	public static final String NEW_ITEM_STOP_PRICE_NAME = "New Item Stop Price Name";
 	public static final String NEW_ITEM_STOP_PRICE_LABEL = "New Item Stop Price Label";
 	public static final String JOIN_BUTTON_NAME = "Join Button";
+	
+	private JLabel itemIdLabel;
+	private JTextField itemIdField;
+	private JLabel stopPriceLabel;
+	private JFormattedTextField stopPriceField;
 	
 	private final String SNIPERS_TABLE_NAME = "Snipers";
 	private final Announcer<UserRequestListener> userRequests =
@@ -74,17 +80,16 @@ public class MainWindow extends JFrame
 	{
 		JPanel controls = new JPanel(new FlowLayout());
 		
-		controls.add(makeItemIdLabel());
-		final JTextField itemIdField = makeItemIdField();
-		controls.add(itemIdField);
-		controls.add(makeStopPriceLabel());
-		controls.add(makeStopPriceField());
-		controls.add(makeJoinAuctionButton(itemIdField));
+		addItemIdLabel(controls);
+		addItemIdField(controls);
+		addStopPriceLabel(controls);
+		addStopPriceField(controls);
+		addJoinAuctionButton(controls);
 		
 		return controls;
 	}
 
-	private JButton makeJoinAuctionButton(final JTextField itemIdField) {
+	private void addJoinAuctionButton(JPanel controls) {
 		JButton joinAuctionButton = new JButton("Join Auction");
 		joinAuctionButton.setName(JOIN_BUTTON_NAME);
 		joinAuctionButton.addActionListener(
@@ -92,14 +97,25 @@ public class MainWindow extends JFrame
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						userRequests.announce().joinAuction(itemIdField.getText());
+						userRequests.announce().joinAuction(
+							new Item(itemId(), stopPrice()));
 					}
 				});
-		return joinAuctionButton;
+		controls.add(joinAuctionButton);
+	}
+	
+	private String itemId()
+	{
+		return itemIdField.getText();
+	}
+	
+	private int stopPrice()
+	{
+		return ((Number)stopPriceField.getValue()).intValue();
 	}
 
-	private JFormattedTextField makeStopPriceField() {
-		final JFormattedTextField stopPriceField = new JFormattedTextField();
+	private void addStopPriceField(JPanel controls) {
+		stopPriceField = new JFormattedTextField();
 		DecimalFormat numericFormat = (DecimalFormat)DecimalFormat.getNumberInstance();
 		numericFormat.setMaximumIntegerDigits(10);
 		stopPriceField.setFormatterFactory(
@@ -107,25 +123,25 @@ public class MainWindow extends JFrame
 		
 		stopPriceField.setColumns(25);
 		stopPriceField.setName(NEW_ITEM_STOP_PRICE_NAME);
-		return stopPriceField;
+		controls.add(stopPriceField);
 	}
 
-	private JLabel makeStopPriceLabel() {
-		final JLabel stopPriceLabel = new JLabel("Stop Price: ");
+	private void addStopPriceLabel(JPanel controls) {
+		stopPriceLabel = new JLabel("Stop Price: ");
 		stopPriceLabel.setName(NEW_ITEM_STOP_PRICE_LABEL);
-		return stopPriceLabel;
+		controls.add(stopPriceLabel);
 	}
 
-	private JTextField makeItemIdField() {
-		JTextField itemIdField = new JTextField();
+	private void addItemIdField(JPanel controls) {
+		itemIdField = new JTextField();
 		itemIdField.setColumns(25);
 		itemIdField.setName(NEW_ITEM_ID_NAME);
-		return itemIdField;
+		controls.add(itemIdField);
 	}
 
-	private JLabel makeItemIdLabel() {
-		final JLabel itemIdLabel = new JLabel("Item ID: ");
+	private void addItemIdLabel(JPanel controls) {
+		itemIdLabel = new JLabel("Item ID: ");
 		itemIdLabel.setName(NEW_ITEM_ID_LABEL);
-		return itemIdLabel;
+		controls.add(itemIdLabel);
 	}
 }
