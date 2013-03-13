@@ -65,6 +65,7 @@ public class XMPPAuctionTest
 				   {
 					   public void auctionClosed() { auctionWasClosed.countDown(); }
 					   public void currentPrice(int price, int increment, PriceSource priceSource) {}
+					   public void auctionFailed() {};
 				   };
 	}
 }

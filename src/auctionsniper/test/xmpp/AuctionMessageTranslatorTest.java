@@ -66,4 +66,37 @@ public class AuctionMessageTranslatorTest
 		
 		context.assertIsSatisfied();
 	}
+	
+	@Test
+	public void notifiesAuctionFailedWhenBadMessageReceived()
+	{
+		context.checking(new Expectations()
+						{{
+							exactly(1).of(listener).auctionFailed();
+						}});
+		
+		Message message = new Message();
+		message.setBody("a bad message");
+		
+		translator.processMessage(UNUSED_CHAT, message);
+		
+		context.assertIsSatisfied();
+	}
+	
+	@Test
+	public void notifiesAuctionFailedWhenEventTypeMissing()
+	{
+		context.checking(new Expectations()
+		{{
+			exactly(1).of(listener).auctionFailed();
+		}});
+
+		Message message = new Message();
+		message.setBody("SOLVersion: 1.1; CurrentPrice: 234; Increment: 5; Bidder: " +
+					    ApplicationRunner.SNIPER_ID + ";");
+		
+		translator.processMessage(UNUSED_CHAT, message);
+		
+		context.assertIsSatisfied();
+	}
 }

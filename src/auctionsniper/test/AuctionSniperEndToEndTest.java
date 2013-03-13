@@ -3,7 +3,6 @@ package auctionsniper.test;
 import org.junit.After;
 import org.junit.Test;
 
-
 public class AuctionSniperEndToEndTest
 {
 	private final FakeAuctionServer auction1 = new FakeAuctionServer("item-54321");
@@ -107,6 +106,29 @@ public class AuctionSniperEndToEndTest
 		application.showsSniperHasLostAuction(auction1, 1207, 1098);
 	}
 	
+	@Test
+	public void sniperReportsInvalidAuctionMessageAndStopsRespondingToEvents() throws Exception
+	{
+		String brokenMessage = "A broken message";
+		auction1.startSellingItem();
+		auction2.startSellingItem();
+		
+		application.startBiddingIn(auction1, auction2);
+		auction1.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+		
+		auction1.reportPrice(500, 20, " other bidder");
+		auction1.hasReceivedBid(520, ApplicationRunner.SNIPER_XMPP_ID);
+		
+		auction1.sendInvalidMessageContaining(brokenMessage);
+		application.showsSniperHasFailed(auction1);
+		
+		auction1.reportPrice(520, 21, "other bidder");
+		waitForAnotherAuctionEvent();
+		
+		application.reportsInvalidMessage(auction1, brokenMessage);
+		application.showsSniperHasFailed(auction1);
+	}
+	
 	@After
 	public void stopAuction()
 	{
@@ -117,5 +139,12 @@ public class AuctionSniperEndToEndTest
 	public void stopApplication()
 	{
 		application.stop();
+	}
+	
+	private void waitForAnotherAuctionEvent() throws Exception
+	{
+		auction2.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+		auction2.reportPrice(600, 6, "other bidder");
+		application.hasShownSniperIsBidding(auction2, 600, 606);
 	}
 }

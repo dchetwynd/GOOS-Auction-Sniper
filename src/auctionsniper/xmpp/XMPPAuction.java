@@ -8,6 +8,7 @@ import auctionsniper.main.Announcer;
 import auctionsniper.main.Auction;
 import auctionsniper.main.AuctionEventListener;
 import auctionsniper.main.Main;
+import auctionsniper.main.AuctionEventListener.PriceSource;
 
 public class XMPPAuction implements Auction
 {
@@ -17,12 +18,10 @@ public class XMPPAuction implements Auction
 	
 	public XMPPAuction(XMPPConnection connection, String itemId)
 	{
+		AuctionMessageTranslator translator = translatorFor(connection);
 		this.chat = connection.getChatManager()
-						.createChat(auctionId(itemId, connection), null);
-		chat.addMessageListener(
-				new AuctionMessageTranslator(
-						connection.getUser(),
-						auctionEventListeners.announce()));
+						.createChat(auctionId(itemId, connection), translator);
+		addAuctionEventListener(chatDisconnectFor(translator));
 	}
 	
 	public void bid(int amount)
@@ -38,6 +37,26 @@ public class XMPPAuction implements Auction
 	public void addAuctionEventListener(AuctionEventListener listener)
 	{
 		auctionEventListeners.addListener(listener);
+	}
+	
+	private AuctionEventListener chatDisconnectFor(final AuctionMessageTranslator translator)
+	{
+		return new AuctionEventListener()
+		{
+			public void auctionFailed()
+			{
+				chat.removeMessageListener(translator);
+			}
+			public void auctionClosed() {}
+			public void currentPrice(int price, int increment, PriceSource bidder) {}
+		};
+	}
+	
+	private AuctionMessageTranslator translatorFor(XMPPConnection connection)
+	{
+		return new AuctionMessageTranslator(
+			connection.getUser(),
+			auctionEventListeners.announce());
 	}
 	
 	private void sendMessage(final String message)

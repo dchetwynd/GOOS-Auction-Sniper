@@ -45,6 +45,12 @@ public class AuctionSniper implements AuctionEventListener
 		notifyChange();
 	}
 	
+	public void auctionFailed()
+	{
+		snapshot = snapshot.failed();
+		sniperListeners.announce().sniperStateChanged(snapshot);
+	}
+	
 	public void addSniperListener(SniperListener listener)
 	{
 		sniperListeners.addListener(listener);

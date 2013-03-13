@@ -1,10 +1,13 @@
 package auctionsniper.test;
 
+import auctionsniper.main.AuctionLogDriver;
 import auctionsniper.main.Main;
 import auctionsniper.main.SniperState;
 import auctionsniper.ui.MainWindow;
 import auctionsniper.xmpp.XMPPAuctionHouse;
+
 import static auctionsniper.main.SnipersTableModel.textFor;
+import static org.hamcrest.Matchers.containsString;
 
 public class ApplicationRunner {
 	public static final String SNIPER_ID = "sniper";
@@ -13,13 +16,20 @@ public class ApplicationRunner {
 			SNIPER_ID, Main.XMPP_HOSTNAME, XMPPAuctionHouse.AUCTION_RESOURCE);
 	
 	private AuctionSniperDriver driver;
+	private AuctionLogDriver logDriver = new AuctionLogDriver();
 	
 	public void startBiddingIn(final FakeAuctionServer...auctions)
 	{
-		startBiddingWithStopPrice(Integer.MAX_VALUE, auctions);
+		startSniper();
+		for (FakeAuctionServer auction: auctions)
+		{
+			openBiddingFor(Integer.MAX_VALUE, auction);
+		}
 	}
 
-	private void startSniper() {
+	private void startSniper()
+	{
+		logDriver.clearLog();
 		Thread thread = new Thread("Test Application")
 		{
 			@Override
@@ -80,16 +90,16 @@ public class ApplicationRunner {
 		driver.showsSniperStatus(auction.getItemId(), winningBid, winningBid, textFor(SniperState.WINNING));
 	}
 	
-	public void startBiddingWithStopPrice(int stopPrice, final FakeAuctionServer...auctions)
+	public void startBiddingWithStopPrice(int stopPrice, final FakeAuctionServer auction)
 	{
 		startSniper();
-		
-		for (FakeAuctionServer auction: auctions)
-		{
-			final String itemId = auction.getItemId();
-			driver.startBiddingFor(itemId, stopPrice);
-			driver.showsSniperStatus(itemId, 0, 0, textFor(SniperState.JOINING));
-		}
+		openBiddingFor(stopPrice, auction);
+	}
+
+	private void openBiddingFor(int stopPrice, final FakeAuctionServer auction) {
+		final String itemId = auction.getItemId();
+		driver.startBiddingFor(itemId, stopPrice);
+		driver.showsSniperStatus(itemId, 0, 0, textFor(SniperState.JOINING));
 	}
 	
 	public void stop()
@@ -98,5 +108,15 @@ public class ApplicationRunner {
 		{
 			driver.dispose();
 		}
+	}
+	
+	public void showsSniperHasFailed(FakeAuctionServer auction)
+	{
+		driver.showsSniperStatus(auction.getItemId(), 0, 0, textFor(SniperState.FAILED));
+	}
+	
+	public void reportsInvalidMessage(FakeAuctionServer auction, String invalidMessage)
+	{
+		logDriver.hasEntry(containsString(invalidMessage));
 	}
 }

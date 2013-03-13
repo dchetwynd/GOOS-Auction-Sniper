@@ -17,7 +17,8 @@ public class SnipersTableModel extends AbstractTableModel
 			"Winning in Auction",
 			"Losing in Auction",
 			"Lost Auction",
-			"Won Auction"
+			"Won Auction",
+			"Failed Auction"
 		};
 	
 	private List<SniperSnapshot> snipers = new ArrayList<SniperSnapshot>();
