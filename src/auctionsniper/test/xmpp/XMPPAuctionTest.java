@@ -18,6 +18,7 @@ import auctionsniper.main.Main;
 import auctionsniper.test.ApplicationRunner;
 import auctionsniper.test.FakeAuctionServer;
 import auctionsniper.xmpp.XMPPAuction;
+import auctionsniper.xmpp.XMPPAuctionException;
 import auctionsniper.xmpp.XMPPAuctionHouse;
 
 public class XMPPAuctionTest
@@ -27,7 +28,7 @@ public class XMPPAuctionTest
 	private XMPPAuctionHouse auctionHouse;
 	
 	@Before
-	public void startSellingItem() throws XMPPException
+	public void startSellingItem() throws XMPPAuctionException
 	{
 		auctionHouse = XMPPAuctionHouse.connect(Main.XMPP_HOSTNAME,
 											   ApplicationRunner.SNIPER_ID,

@@ -1,5 +1,7 @@
 package auctionsniper.test;
 
+import java.io.IOException;
+
 import auctionsniper.main.AuctionLogDriver;
 import auctionsniper.main.Main;
 import auctionsniper.main.SniperState;
@@ -116,6 +118,7 @@ public class ApplicationRunner {
 	}
 	
 	public void reportsInvalidMessage(FakeAuctionServer auction, String invalidMessage)
+		throws IOException
 	{
 		logDriver.hasEntry(containsString(invalidMessage));
 	}
