@@ -10,6 +10,7 @@ import auctionsniper.main.AuctionEventListener;
 import auctionsniper.main.AuctionEventListener.PriceSource;
 import auctionsniper.test.ApplicationRunner;
 import auctionsniper.xmpp.AuctionMessageTranslator;
+import auctionsniper.xmpp.XMPPFailureReporter;
 
 public class AuctionMessageTranslatorTest
 {
@@ -17,6 +18,7 @@ public class AuctionMessageTranslatorTest
 	
 	private final Mockery context = new Mockery();
 	private final AuctionEventListener listener = context.mock(AuctionEventListener.class);
+	private final XMPPFailureReporter failureReporter = context.mock(XMPPFailureReporter.class);
 	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(ApplicationRunner.SNIPER_ID, listener);
 	
 	@Test
@@ -70,15 +72,10 @@ public class AuctionMessageTranslatorTest
 	@Test
 	public void notifiesAuctionFailedWhenBadMessageReceived()
 	{
-		context.checking(new Expectations()
-						{{
-							exactly(1).of(listener).auctionFailed();
-						}});
+		String badMessage = "a bad message";
+		expectFailureWithMessage(badMessage);
 		
-		Message message = new Message();
-		message.setBody("a bad message");
-		
-		translator.processMessage(UNUSED_CHAT, message);
+		translator.processMessage(UNUSED_CHAT, message(badMessage));
 		
 		context.assertIsSatisfied();
 	}
@@ -86,17 +83,31 @@ public class AuctionMessageTranslatorTest
 	@Test
 	public void notifiesAuctionFailedWhenEventTypeMissing()
 	{
-		context.checking(new Expectations()
-		{{
-			exactly(1).of(listener).auctionFailed();
-		}});
-
-		Message message = new Message();
-		message.setBody("SOLVersion: 1.1; CurrentPrice: 234; Increment: 5; Bidder: " +
-					    ApplicationRunner.SNIPER_ID + ";");
+		String badMessage = "SOLVersion: 1.1; CurrentPrice: 234; Increment: 5; Bidder: " +
+			    ApplicationRunner.SNIPER_ID + ";";
+		expectFailureWithMessage(badMessage);
 		
-		translator.processMessage(UNUSED_CHAT, message);
+		translator.processMessage(UNUSED_CHAT, message(badMessage));
 		
 		context.assertIsSatisfied();
+	}
+	
+	private Message message(String messageBody)
+	{
+		Message message = new Message();
+		message.setBody(messageBody);
+		return message;
+	}
+	
+	private void expectFailureWithMessage(final String badMessage)
+	{
+		context.checking(new Expectations()
+						{{
+							oneOf(listener).auctionFailed();
+							oneOf(failureReporter).cannotTranslateMessage(
+								with(ApplicationRunner.SNIPER_ID),
+								with(badMessage),
+								with(any(Exception.class)));
+						}});
 	}
 }
