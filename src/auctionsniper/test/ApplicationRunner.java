@@ -2,8 +2,6 @@ package auctionsniper.test;
 
 import java.io.IOException;
 
-import javax.swing.SwingUtilities;
-
 import auctionsniper.main.AuctionLogDriver;
 import auctionsniper.main.Main;
 import auctionsniper.main.SniperState;
@@ -41,7 +39,7 @@ public class ApplicationRunner {
 			{
 				try
 				{
-					Main.main(Main.XMPP_HOSTNAME, SNIPER_ID, SNIPER_PASSWORD);
+					Main.main(arguments());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -49,11 +47,24 @@ public class ApplicationRunner {
 		};
 		thread.setDaemon(true);
 		thread.start();
-		makeSureAwtIsLoadedBeforeStartingTheDriverOnOSXToStopDeadlock();
-		
 		driver = new AuctionSniperDriver(1000);
 		driver.hasTitle(MainWindow.APPLICATION_TITLE);
 		driver.hasColumnTitles();
+	}
+	
+	protected static String[] arguments(FakeAuctionServer...auctions)
+	{
+		String[] arguments = new String[auctions.length + 3];
+		arguments[0] = Main.XMPP_HOSTNAME;
+		arguments[1] = SNIPER_ID;
+		arguments[2] = SNIPER_PASSWORD;
+		
+		for (int i = 0; i < auctions.length; i++)
+		{
+			arguments[i + 3] = auctions[i].getItemId();
+		}
+		
+		return arguments;
 	}
 	
 	public void showsSniperHasLostAuction(FakeAuctionServer auction, int lastPrice, int lastBid)
@@ -91,19 +102,6 @@ public class ApplicationRunner {
 		final String itemId = auction.getItemId();
 		driver.startBiddingFor(itemId, stopPrice);
 		driver.showsSniperStatus(itemId, 0, 0, textFor(SniperState.JOINING));
-	}
-
-	private void makeSureAwtIsLoadedBeforeStartingTheDriverOnOSXToStopDeadlock()
-	{
-		try
-		{
-			SwingUtilities.invokeAndWait(new Runnable()
-										{
-											public void run() {}
-										});
-		} catch (Exception e){
-			throw new AssertionError(e);
-		}
 	}
 	
 	public void stop()
