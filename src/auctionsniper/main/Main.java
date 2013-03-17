@@ -27,8 +27,6 @@ public class Main {
 	private MainWindow ui;
 	private final SniperPortfolio portfolio = new SniperPortfolio();
 	
-	private static List<Auction> notToBeGcd = new ArrayList<Auction>();
-	
 	public Main() throws Exception
 	{
 		SwingUtilities.invokeAndWait(new Runnable()
