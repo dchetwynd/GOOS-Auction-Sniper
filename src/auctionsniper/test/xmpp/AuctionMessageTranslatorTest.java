@@ -10,7 +10,6 @@ import auctionsniper.main.AuctionEventListener;
 import auctionsniper.main.AuctionEventListener.PriceSource;
 import auctionsniper.test.ApplicationRunner;
 import auctionsniper.xmpp.AuctionMessageTranslator;
-import auctionsniper.xmpp.XMPPFailureReporter;
 
 public class AuctionMessageTranslatorTest
 {
@@ -18,9 +17,7 @@ public class AuctionMessageTranslatorTest
 	
 	private final Mockery context = new Mockery();
 	private final AuctionEventListener listener = context.mock(AuctionEventListener.class);
-	private final XMPPFailureReporter failureReporter = context.mock(XMPPFailureReporter.class);
-	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(
-		ApplicationRunner.SNIPER_ID, listener, failureReporter);
+	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(ApplicationRunner.SNIPER_ID, listener);
 	
 	@Test
 	public void notifiesAuctionClosedWhenCloseMessageReceived()
@@ -73,39 +70,32 @@ public class AuctionMessageTranslatorTest
 	@Test
 	public void notifiesAuctionFailedWhenBadMessageReceived()
 	{
-		final String badMessage = "a bad message";
-		expectFailureWithMessage(badMessage);
+		context.checking(new Expectations()
+						{{
+							exactly(1).of(listener).auctionFailed();
+						}});
 		
-		translator.processMessage(UNUSED_CHAT, message(badMessage));
+		Message message = new Message();
+		message.setBody("a bad message");
+		
+		translator.processMessage(UNUSED_CHAT, message);
 		
 		context.assertIsSatisfied();
-	}
-
-	private void expectFailureWithMessage(final String badMessage) {
-		context.checking(new Expectations()
-			{{
-				oneOf(listener).auctionFailed();
-				oneOf(failureReporter).cannotTranslateMessage(
-					with(ApplicationRunner.SNIPER_ID),
-					with(badMessage),
-					with(any(Exception.class)));
-			}});
-	}
-
-	private Message message(final String messageBody) {
-		Message message = new Message();
-		message.setBody(messageBody);
-		return message;
 	}
 	
 	@Test
 	public void notifiesAuctionFailedWhenEventTypeMissing()
 	{
-		final String badMessage = "SOLVersion: 1.1; CurrentPrice: 234; Increment: 5; Bidder: " +
-			    ApplicationRunner.SNIPER_ID + ";";
-		expectFailureWithMessage(badMessage);
+		context.checking(new Expectations()
+		{{
+			exactly(1).of(listener).auctionFailed();
+		}});
 
-		translator.processMessage(UNUSED_CHAT, message(badMessage));
+		Message message = new Message();
+		message.setBody("SOLVersion: 1.1; CurrentPrice: 234; Increment: 5; Bidder: " +
+					    ApplicationRunner.SNIPER_ID + ";");
+		
+		translator.processMessage(UNUSED_CHAT, message);
 		
 		context.assertIsSatisfied();
 	}

@@ -8,7 +8,6 @@ import org.jivesoftware.smack.XMPPException;
 
 import auctionsniper.main.Main;
 import auctionsniper.main.SingleMessageListener;
-import auctionsniper.xmpp.XMPPAuctionException;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
@@ -29,14 +28,12 @@ public class FakeAuctionServer
 		this.connection = new XMPPConnection(Main.XMPP_HOSTNAME);
 	}
 	
-	public void startSellingItem() throws XMPPAuctionException
+	public void startSellingItem() throws XMPPException
 	{
-		try
-		{
-			connection.connect();
-			connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
-					AUCTION_PASSWORD, AUCTION_RESOURCE);
-			connection.getChatManager().addChatListener(
+		connection.connect();
+		connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
+				AUCTION_PASSWORD, AUCTION_RESOURCE);
+		connection.getChatManager().addChatListener(
 				new ChatManagerListener()
 				{
 					public void chatCreated(Chat chat, boolean createdLocally)
@@ -45,34 +42,19 @@ public class FakeAuctionServer
 						chat.addMessageListener(messageListener);
 					}
 				});
-		} catch (XMPPException e) {
-			throw new XMPPAuctionException("Could not start selling item " + itemId, e);
-		}
 	}
 	
-	public void announceClosed() throws XMPPAuctionException
+	public void announceClosed() throws XMPPException
 	{
-		try
-		{
-			currentChat.sendMessage("SOLVersion: 1.1; Event: CLOSE;");
-		} catch (XMPPException e)
-		{
-			throw new XMPPAuctionException("Could not close auction" + connection, e);
-		}
+		currentChat.sendMessage("SOLVersion: 1.1; Event: CLOSE;");
 	}
 	
-	public void reportPrice(int price, int increment, String bidder)
-		throws XMPPAuctionException
+	public void reportPrice(int price, int increment, String bidder) throws XMPPException
 	{
-		try
-		{
-			currentChat.sendMessage(
-					String.format("SOLVersion: 1.1; Event: PRICE; " +
-								  "CurrentPrice: %d; Increment: %d; Bidder: %s;",
-								  price, increment, bidder));
-		} catch (XMPPException e) {
-			throw new XMPPAuctionException("Could not report price for " + itemId, e);
-		}
+		currentChat.sendMessage(
+				String.format("SOLVersion: 1.1; Event: PRICE; " +
+							  "CurrentPrice: %d; Increment: %d; Bidder: %s;",
+							  price, increment, bidder));
 	}
 	
 	public void hasReceivedJoinRequestFrom(String sniperId) throws InterruptedException
@@ -94,8 +76,7 @@ public class FakeAuctionServer
 	
 	public void stop()
 	{
-		if (connection.isConnected())
-			connection.disconnect();
+		connection.disconnect();
 	}
 	
 	public String getItemId()
@@ -103,15 +84,8 @@ public class FakeAuctionServer
 		return itemId;
 	}
 	
-	public void sendInvalidMessageContaining(String message)
-		throws XMPPAuctionException
+	public void sendInvalidMessageContaining(String message) throws XMPPException
 	{
-		try
-		{
-			currentChat.sendMessage(message);
-		} catch (XMPPException e) {
-			throw new XMPPAuctionException("Could not send message " + message, e);
-		}
-		
+		currentChat.sendMessage(message);
 	}
 }

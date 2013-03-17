@@ -1,10 +1,5 @@
 package auctionsniper.xmpp;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
-import org.apache.commons.io.FilenameUtils;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
@@ -14,24 +9,20 @@ import auctionsniper.main.Item;
 
 public class XMPPAuctionHouse implements AuctionHouse
 {
-	private static final String LOGGER_NAME = "auction-sniper";
-	public static final String LOG_FILE_NAME = "auction-sniper.log";
 	public static final String AUCTION_RESOURCE = "Auction";
 	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	public static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN +  "@%s/" + AUCTION_RESOURCE;
 	
 	private XMPPConnection connection;
-	private final LoggingXMPPFailureReporter failureReporter;
 	
-	public XMPPAuctionHouse(XMPPConnection connection) throws XMPPAuctionException
+	public XMPPAuctionHouse(XMPPConnection connection)
 	{
 		this.connection = connection;
-		this.failureReporter = new LoggingXMPPFailureReporter(makeLogger());
 	}
 	
 	public Auction auctionFor(Item item)
 	{
-		return new XMPPAuction(connection, item.identifier, failureReporter);
+		return new XMPPAuction(connection, item.identifier);
 	}
 	
 	public XMPPConnection getConnection()
@@ -40,18 +31,13 @@ public class XMPPAuctionHouse implements AuctionHouse
 	}
 	
 	public static XMPPAuctionHouse connect(String hostname, String username, String password)
-		throws XMPPAuctionException
+		throws XMPPException
 	{
 		XMPPConnection connection = new XMPPConnection(hostname);
-		try
-		{
-			connection.connect();
-			connection.login(username, password, AUCTION_RESOURCE);
-			
-			return new XMPPAuctionHouse(connection);
-		} catch (XMPPException e) {
-			throw new XMPPAuctionException("Could not connect to auction: " + connection, e);
-		}
+		connection.connect();
+		connection.login(username, password, AUCTION_RESOURCE);
+		
+		return new XMPPAuctionHouse(connection);
 	}
 	
 	public void disconnect()
@@ -59,27 +45,6 @@ public class XMPPAuctionHouse implements AuctionHouse
 		if (connection != null)
 		{
 			connection.disconnect();
-		}
-	}
-	
-	private XMPPLogWrapper makeLogger() throws XMPPAuctionException
-	{
-		Logger logger = Logger.getLogger(LOGGER_NAME);
-		logger.setUseParentHandlers(false);
-		logger.addHandler(simpleFileHandler());
-		return new XMPPLogWrapper(logger);
-	}
-	
-	private FileHandler simpleFileHandler() throws XMPPAuctionException
-	{
-		try
-		{
-			FileHandler handler = new FileHandler(LOG_FILE_NAME);
-			handler.setFormatter(new SimpleFormatter());
-			return handler;
-		} catch (Exception e) {
-			throw new XMPPAuctionException("Could not create logger FileHandler " +
-				FilenameUtils.getFullPath(LOG_FILE_NAME), e);
 		}
 	}
 }

@@ -15,7 +15,5 @@
 	<classpathentry kind="lib" path="/Users/dchetwyn/Documents/workspace/AuctionSniper/references/windowlicker-core-r268.jar"/>
 	<classpathentry kind="lib" path="/Users/dchetwyn/Documents/workspace/AuctionSniper/references/windowlicker-swing-r268.jar"/>
 	<classpathentry kind="lib" path="/Users/dchetwyn/Documents/workspace/AuctionSniper/references/windowlicker-web-r268.jar"/>
-	<classpathentry kind="lib" path="/Users/dchetwyn/GOOS-Auction-Sniper/references/org.apache.commons.io.jar"/>
-	<classpathentry kind="lib" path="/Users/dchetwyn/GOOS-Auction-Sniper/references/jmock-legacy-2.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
