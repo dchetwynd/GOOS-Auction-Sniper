@@ -8,6 +8,7 @@ import org.jivesoftware.smack.XMPPException;
 
 import auctionsniper.main.Main;
 import auctionsniper.main.SingleMessageListener;
+import auctionsniper.xmpp.XMPPAuctionException;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
@@ -28,20 +29,25 @@ public class FakeAuctionServer
 		this.connection = new XMPPConnection(Main.XMPP_HOSTNAME);
 	}
 	
-	public void startSellingItem() throws XMPPException
+	public void startSellingItem() throws XMPPAuctionException
 	{
-		connection.connect();
-		connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
-				AUCTION_PASSWORD, AUCTION_RESOURCE);
-		connection.getChatManager().addChatListener(
-				new ChatManagerListener()
-				{
-					public void chatCreated(Chat chat, boolean createdLocally)
+		try
+		{
+			connection.connect();
+			connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
+					AUCTION_PASSWORD, AUCTION_RESOURCE);
+			connection.getChatManager().addChatListener(
+					new ChatManagerListener()
 					{
-						currentChat = chat;
-						chat.addMessageListener(messageListener);
-					}
-				});
+						public void chatCreated(Chat chat, boolean createdLocally)
+						{
+							currentChat = chat;
+							chat.addMessageListener(messageListener);
+						}
+					});
+		} catch (XMPPException e) {
+			throw new XMPPAuctionException("Could not start selling item " + itemId, e);
+		}
 	}
 	
 	public void announceClosed() throws XMPPException

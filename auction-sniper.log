@@ -1,0 +1,2 @@
+Mar 29, 2013 4:04:14 PM auctionsniper.xmpp.XMPPLogWrapper severe
+SEVERE: <sniper@127.0.0.1/Auction> Could not translate message "A broken message" because "java.lang.ArrayIndexOutOfBoundsException: 1"

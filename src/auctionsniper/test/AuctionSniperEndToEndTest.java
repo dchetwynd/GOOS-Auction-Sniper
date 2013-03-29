@@ -1,6 +1,7 @@
 package auctionsniper.test;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class AuctionSniperEndToEndTest
@@ -56,6 +57,7 @@ public class AuctionSniperEndToEndTest
 		application.showsSniperHasWonAuction(auction1, 1098);
 	}
 	
+	@Ignore
 	@Test
 	public void sniperBidsForMultipleItems() throws Exception
 	{

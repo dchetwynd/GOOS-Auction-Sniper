@@ -2,6 +2,8 @@ package auctionsniper.test;
 
 import java.io.IOException;
 
+import javax.swing.SwingUtilities;
+
 import auctionsniper.main.AuctionLogDriver;
 import auctionsniper.main.Main;
 import auctionsniper.main.SniperState;
@@ -47,9 +49,21 @@ public class ApplicationRunner {
 		};
 		thread.setDaemon(true);
 		thread.start();
+		makeSureAwtIsLoadedBeforeStartingTheDriverOnOSXToStopDeadlock();
+		
 		driver = new AuctionSniperDriver(1000);
 		driver.hasTitle(MainWindow.APPLICATION_TITLE);
 		driver.hasColumnTitles();
+	}
+	
+	private void makeSureAwtIsLoadedBeforeStartingTheDriverOnOSXToStopDeadlock()
+	{
+		try
+		{
+			SwingUtilities.invokeAndWait(new Runnable() { public void run() {}});
+		} catch (Exception e) {
+			throw new AssertionError(e);
+		}
 	}
 	
 	protected static String[] arguments(FakeAuctionServer...auctions)
